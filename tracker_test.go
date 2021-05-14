@@ -6,7 +6,7 @@ import (
 )
 
 func TestTracker(t *testing.T) {
-	t.Run("Zero payments should return empty list", func(t *testing.T) {
+	t.Run("Zero payments should return nil", func(t *testing.T) {
 		tracker := NewTracker()
 		userId := 1
 
