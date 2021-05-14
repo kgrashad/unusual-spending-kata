@@ -108,6 +108,58 @@ func TestGetUserPaymentCategorySummary(t *testing.T) {
 
 		assertPaymentCategorySummaries(want, got, t)
 	})
+
+	t.Run("Category payments in previous month only should return expected category slice", func(t *testing.T) {
+		tracker := NewTracker()
+		userId := 1
+
+		payment1 := Payment{
+			Category: "Reading",
+			Price:    10,
+		}
+
+		tracker.TrackUserPayment(userId, payment1, PreviousMonth)
+
+		got := tracker.GetUserPaymentCategorySummaries(userId)
+		want := []PaymentCategorySummary{
+			{
+				Category:           "Reading",
+				PreviousMonthTotal: 10,
+				CurrentMonthTotal:  0,
+			},
+		}
+
+		assertPaymentCategorySummaries(want, got, t)
+	})
+
+	t.Run("Category payments in current month only should return expected category slice", func(t *testing.T) {
+		tracker := NewTracker()
+		userId := 1
+
+		payment2 := Payment{
+			Category: "Reading",
+			Price:    15,
+		}
+
+		payment3 := Payment{
+			Category: "Reading",
+			Price:    20,
+		}
+
+		tracker.TrackUserPayment(userId, payment2, CurrentMonth)
+		tracker.TrackUserPayment(userId, payment3, CurrentMonth)
+
+		got := tracker.GetUserPaymentCategorySummaries(userId)
+		want := []PaymentCategorySummary{
+			{
+				Category:           "Reading",
+				PreviousMonthTotal: 0,
+				CurrentMonthTotal:  35,
+			},
+		}
+
+		assertPaymentCategorySummaries(want, got, t)
+	})
 }
 
 func assertPayments(want, got []Payment, t *testing.T) {
