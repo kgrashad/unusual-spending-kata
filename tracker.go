@@ -4,9 +4,14 @@ type Tracker struct {
 	currentMonthPayments  map[int][]Payment
 	previousMonthPayments map[int][]Payment
 }
+
 type Payment struct {
 	Description string
 }
+
+type PaymentCategorySummary struct {
+}
+
 type Month string
 
 const (
@@ -33,4 +38,8 @@ func (t *Tracker) TrackUserPayment(userId int, payment Payment, month Month) {
 
 func (t *Tracker) GetUserPayments(userId int) (currMonth, prevMonth []Payment) {
 	return t.currentMonthPayments[userId], t.previousMonthPayments[userId]
+}
+
+func (t *Tracker) GetUserPaymentCategorySummary(userId int) []PaymentCategorySummary {
+	return []PaymentCategorySummary{}
 }

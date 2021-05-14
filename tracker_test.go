@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestTracker(t *testing.T) {
+func TestGetUserPayments(t *testing.T) {
 	t.Run("Zero payments should return nil", func(t *testing.T) {
 		tracker := NewTracker()
 		userId := 1
@@ -14,7 +14,6 @@ func TestTracker(t *testing.T) {
 
 		assertPayments(nil, currMonthPayments, t)
 		assertPayments(nil, prevMonthPayments, t)
-
 	})
 
 	t.Run("When current month payment is tracked, GetUserPayments should return it.", func(t *testing.T) {
@@ -28,7 +27,6 @@ func TestTracker(t *testing.T) {
 		want := []Payment{payment}
 
 		assertPayments(want, currMonthPayments, t)
-
 	})
 
 	t.Run("When previous month payment is tracked, GetUserPayments should return it.", func(t *testing.T) {
@@ -42,7 +40,6 @@ func TestTracker(t *testing.T) {
 		want := []Payment{payment}
 
 		assertPayments(want, prevMonthPayments, t)
-
 	})
 
 	t.Run("When multiple users' payments are tracked, only asked for user is returned", func(t *testing.T) {
@@ -66,10 +63,28 @@ func TestTracker(t *testing.T) {
 	})
 }
 
+func TestGetUserPaymentCategorySummary(t *testing.T) {
+	t.Run("No tracked payments should return empty category slice", func(t *testing.T) {
+		tracker := NewTracker()
+		userId := 1
+
+		got := tracker.GetUserPaymentCategorySummary(userId)
+		want := []PaymentCategorySummary{}
+
+		assertPaymentCategorySummaries(want, got, t)
+	})
+}
+
 func assertPayments(want, got []Payment, t *testing.T) {
 
 	if !reflect.DeepEqual(want, got) {
 		t.Errorf("got: %v, want: %v", want, got)
 	}
+}
 
+func assertPaymentCategorySummaries(want, got []PaymentCategorySummary, t *testing.T) {
+
+	if !reflect.DeepEqual(want, got) {
+		t.Errorf("got: %v, want: %v", want, got)
+	}
 }
