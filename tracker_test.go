@@ -12,13 +12,9 @@ func TestTracker(t *testing.T) {
 
 		currMonthPayments, prevMonthPayments := tracker.GetUserPayments(userId)
 
-		if len(currMonthPayments) != 0 {
-			t.Errorf("Current month payments list expected to be empty, got %v", currMonthPayments)
-		}
+		assertPayments(nil, currMonthPayments, t)
+		assertPayments(nil, prevMonthPayments, t)
 
-		if len(prevMonthPayments) != 0 {
-			t.Errorf("Previous month payments list expected to be empty, got %v", prevMonthPayments)
-		}
 	})
 
 	t.Run("When current month payment is tracker, GetUserPayments should return it.", func(t *testing.T) {
@@ -31,9 +27,8 @@ func TestTracker(t *testing.T) {
 		currMonthPayments, _ := tracker.GetUserPayments(userId)
 		want := []Payment{payment}
 
-		if !reflect.DeepEqual(currMonthPayments, want) {
-			t.Errorf("got: %v, want: %v", currMonthPayments, want)
-		}
+		assertPayments(want, currMonthPayments, t)
+
 	})
 
 	t.Run("When previous month payment is tracker, GetUserPayments should return it.", func(t *testing.T) {
@@ -43,14 +38,11 @@ func TestTracker(t *testing.T) {
 
 		tracker.TrackUserPayment(userId, payment, PreviousMonth)
 
-		_, previousMonthPayments := tracker.GetUserPayments(userId)
+		_, prevMonthPayments := tracker.GetUserPayments(userId)
 		want := []Payment{payment}
 
-		println(len(previousMonthPayments))
+		assertPayments(want, prevMonthPayments, t)
 
-		if !reflect.DeepEqual(previousMonthPayments, want) {
-			t.Errorf("got: %v, want: %v", previousMonthPayments, want)
-		}
 	})
 
 	t.Run("When multiple users' payments are tracked, only asked for user is returned", func(t *testing.T) {
@@ -67,13 +59,17 @@ func TestTracker(t *testing.T) {
 		tracker.TrackUserPayment(firstUserId, firstUserPayment, PreviousMonth)
 		tracker.TrackUserPayment(secondUserId, secondUserPayment, PreviousMonth)
 
-		_, previousMonthPayments := tracker.GetUserPayments(firstUserId)
+		_, prevMonthPayments := tracker.GetUserPayments(firstUserId)
 		want := []Payment{firstUserPayment}
 
-		println(len(previousMonthPayments))
-
-		if !reflect.DeepEqual(previousMonthPayments, want) {
-			t.Errorf("got: %v, want: %v", previousMonthPayments, want)
-		}
+		assertPayments(want, prevMonthPayments, t)
 	})
+}
+
+func assertPayments(want, got []Payment, t *testing.T) {
+
+	if !reflect.DeepEqual(want, got) {
+		t.Errorf("got: %v, want: %v", want, got)
+	}
+
 }
