@@ -1,10 +1,12 @@
 package main
 
 type Tracker struct {
-	currentMonthPayments  []Payment
-	previousMonthPayments []Payment
+	currentMonthPayments  map[int][]Payment
+	previousMonthPayments map[int][]Payment
 }
-type Payment struct{}
+type Payment struct {
+	Description string
+}
 type Month string
 
 const (
@@ -12,15 +14,23 @@ const (
 	PreviousMonth Month = "Previous Month"
 )
 
+func NewTracker() *Tracker {
+	var t Tracker
+	t.currentMonthPayments = make(map[int][]Payment)
+	t.previousMonthPayments = make(map[int][]Payment)
+
+	return &t
+}
+
 func (t *Tracker) TrackUserPayment(userId int, payment Payment, month Month) {
 	switch month {
 	case CurrentMonth:
-		t.currentMonthPayments = append(t.currentMonthPayments, payment)
+		t.currentMonthPayments[userId] = append(t.currentMonthPayments[userId], payment)
 	case PreviousMonth:
-		t.previousMonthPayments = append(t.previousMonthPayments, payment)
+		t.previousMonthPayments[userId] = append(t.previousMonthPayments[userId], payment)
 	}
 }
 
 func (t *Tracker) GetUserPayments(userId int) (currMonth, prevMonth []Payment) {
-	return t.currentMonthPayments, t.previousMonthPayments
+	return t.currentMonthPayments[userId], t.previousMonthPayments[userId]
 }

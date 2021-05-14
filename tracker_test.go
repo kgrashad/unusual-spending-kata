@@ -7,7 +7,7 @@ import (
 
 func TestTracker(t *testing.T) {
 	t.Run("Zero payments should return empty list", func(t *testing.T) {
-		tracker := Tracker{}
+		tracker := NewTracker()
 		userId := 1
 
 		currMonthPayments, prevMonthPayments := tracker.GetUserPayments(userId)
@@ -22,7 +22,7 @@ func TestTracker(t *testing.T) {
 	})
 
 	t.Run("When current month payment is tracker, GetUserPayments should return it.", func(t *testing.T) {
-		tracker := Tracker{}
+		tracker := NewTracker()
 		payment := Payment{}
 		userId := 1
 
@@ -31,15 +31,13 @@ func TestTracker(t *testing.T) {
 		currMonthPayments, _ := tracker.GetUserPayments(userId)
 		want := []Payment{payment}
 
-		println(len(currMonthPayments))
-
 		if !reflect.DeepEqual(currMonthPayments, want) {
 			t.Errorf("got: %v, want: %v", currMonthPayments, want)
 		}
 	})
 
 	t.Run("When previous month payment is tracker, GetUserPayments should return it.", func(t *testing.T) {
-		tracker := Tracker{}
+		tracker := NewTracker()
 		payment := Payment{}
 		userId := 1
 
@@ -47,6 +45,30 @@ func TestTracker(t *testing.T) {
 
 		_, previousMonthPayments := tracker.GetUserPayments(userId)
 		want := []Payment{payment}
+
+		println(len(previousMonthPayments))
+
+		if !reflect.DeepEqual(previousMonthPayments, want) {
+			t.Errorf("got: %v, want: %v", previousMonthPayments, want)
+		}
+	})
+
+	t.Run("When multiple users' payments are tracked, only asked for user is returned", func(t *testing.T) {
+		tracker := NewTracker()
+		firstUserId := 1
+		secondUserId := 2
+		firstUserPayment := Payment{
+			Description: "I am the first user's payment",
+		}
+		secondUserPayment := Payment{
+			Description: "I am the second user's payment",
+		}
+
+		tracker.TrackUserPayment(firstUserId, firstUserPayment, PreviousMonth)
+		tracker.TrackUserPayment(secondUserId, secondUserPayment, PreviousMonth)
+
+		_, previousMonthPayments := tracker.GetUserPayments(firstUserId)
+		want := []Payment{firstUserPayment}
 
 		println(len(previousMonthPayments))
 
