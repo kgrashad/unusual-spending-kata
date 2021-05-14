@@ -10,14 +10,14 @@ func TestTracker(t *testing.T) {
 		tracker := Tracker{}
 		userId := 1
 
-		currMonth, prevMonth := tracker.GetUserPayments(userId)
+		currMonthPayments, prevMonthPayments := tracker.GetUserPayments(userId)
 
-		if len(currMonth) != 0 {
-			t.Errorf("Current month payments list expected to be empty, got %v", currMonth)
+		if len(currMonthPayments) != 0 {
+			t.Errorf("Current month payments list expected to be empty, got %v", currMonthPayments)
 		}
 
-		if len(prevMonth) != 0 {
-			t.Errorf("Previous month payments list expected to be empty, got %v", prevMonth)
+		if len(prevMonthPayments) != 0 {
+			t.Errorf("Previous month payments list expected to be empty, got %v", prevMonthPayments)
 		}
 	})
 
