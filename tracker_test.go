@@ -21,7 +21,7 @@ func TestTracker(t *testing.T) {
 		}
 	})
 
-	t.Run("When one current month payment is tracker, GetUserPayments should return it.", func(t *testing.T) {
+	t.Run("When current month payment is tracker, GetUserPayments should return it.", func(t *testing.T) {
 		tracker := Tracker{}
 		payment := Payment{}
 		userId := 1
@@ -35,6 +35,23 @@ func TestTracker(t *testing.T) {
 
 		if !reflect.DeepEqual(currMonthPayments, want) {
 			t.Errorf("got: %v, want: %v", currMonthPayments, want)
+		}
+	})
+
+	t.Run("When previous month payment is tracker, GetUserPayments should return it.", func(t *testing.T) {
+		tracker := Tracker{}
+		payment := Payment{}
+		userId := 1
+
+		tracker.TrackUserPayment(userId, payment, PreviousMonth)
+
+		_, previousMonthPayments := tracker.GetUserPayments(userId)
+		want := []Payment{payment}
+
+		println(len(previousMonthPayments))
+
+		if !reflect.DeepEqual(previousMonthPayments, want) {
+			t.Errorf("got: %v, want: %v", previousMonthPayments, want)
 		}
 	})
 }
