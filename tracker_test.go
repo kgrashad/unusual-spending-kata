@@ -68,8 +68,43 @@ func TestGetUserPaymentCategorySummary(t *testing.T) {
 		tracker := NewTracker()
 		userId := 1
 
-		got := tracker.GetUserPaymentCategorySummary(userId)
+		got := tracker.GetUserPaymentCategorySummaries(userId)
 		want := []PaymentCategorySummary{}
+
+		assertPaymentCategorySummaries(want, got, t)
+	})
+
+	t.Run("Category payments across both months should return expected category slice", func(t *testing.T) {
+		tracker := NewTracker()
+		userId := 1
+
+		payment1 := Payment{
+			Category: "Reading",
+			Price:    10,
+		}
+
+		payment2 := Payment{
+			Category: "Reading",
+			Price:    15,
+		}
+
+		payment3 := Payment{
+			Category: "Reading",
+			Price:    20,
+		}
+
+		tracker.TrackUserPayment(userId, payment1, PreviousMonth)
+		tracker.TrackUserPayment(userId, payment2, CurrentMonth)
+		tracker.TrackUserPayment(userId, payment3, CurrentMonth)
+
+		got := tracker.GetUserPaymentCategorySummaries(userId)
+		want := []PaymentCategorySummary{
+			{
+				Category:           "Reading",
+				PreviousMonthTotal: 10,
+				CurrentMonthTotal:  35,
+			},
+		}
 
 		assertPaymentCategorySummaries(want, got, t)
 	})
@@ -78,13 +113,13 @@ func TestGetUserPaymentCategorySummary(t *testing.T) {
 func assertPayments(want, got []Payment, t *testing.T) {
 
 	if !reflect.DeepEqual(want, got) {
-		t.Errorf("got: %v, want: %v", want, got)
+		t.Errorf("want: %v, got: %v", want, got)
 	}
 }
 
 func assertPaymentCategorySummaries(want, got []PaymentCategorySummary, t *testing.T) {
 
 	if !reflect.DeepEqual(want, got) {
-		t.Errorf("got: %v, want: %v", want, got)
+		t.Errorf("want: %v, got: %v", want, got)
 	}
 }
