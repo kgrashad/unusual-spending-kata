@@ -17,7 +17,7 @@ func TestTracker(t *testing.T) {
 
 	})
 
-	t.Run("When current month payment is tracker, GetUserPayments should return it.", func(t *testing.T) {
+	t.Run("When current month payment is tracked, GetUserPayments should return it.", func(t *testing.T) {
 		tracker := NewTracker()
 		payment := Payment{}
 		userId := 1
@@ -31,7 +31,7 @@ func TestTracker(t *testing.T) {
 
 	})
 
-	t.Run("When previous month payment is tracker, GetUserPayments should return it.", func(t *testing.T) {
+	t.Run("When previous month payment is tracked, GetUserPayments should return it.", func(t *testing.T) {
 		tracker := NewTracker()
 		payment := Payment{}
 		userId := 1
