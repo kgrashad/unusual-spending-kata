@@ -12,27 +12,38 @@ const EmailBodyTemplate string = `Hello card user!
 
 We have detected unusually high spending on your card in these categories:
 
-* You spent $%0.0f on %v
-
+%s
 Love,
 
 The Credit Card Company`
+
+const EmailBodyLineTemplate string = "* You spent $%0.0f on %v"
 
 func GenerateEmail(categories []PaymentCategorySummary) (subject, body string, err error) {
 	if categories == nil || len(categories) == 0 {
 		return "", "", ErrEmptySpendingInput
 	}
 
-	subject = fmt.Sprintf(EmailSubjectTemplate, getTotal(categories))
-	body = fmt.Sprintf(EmailBodyTemplate, categories[0].CurrentMonthTotal, categories[0].Category)
-
-	return
+	return getSubject(categories), getBody(categories), nil
 }
 
-func getTotal(categories []PaymentCategorySummary) (total float64) {
+func getSubject(categories []PaymentCategorySummary) string {
+	total := 0.0
+
 	for _, c := range categories {
 		total += c.CurrentMonthTotal
 	}
 
-	return
+	return fmt.Sprintf(EmailSubjectTemplate, total)
+}
+
+func getBody(categories []PaymentCategorySummary) string {
+	bodyLines := ""
+
+	for _, c := range categories {
+		bodyLines += fmt.Sprintf(EmailBodyLineTemplate, c.CurrentMonthTotal, c.Category)
+		bodyLines += fmt.Sprintln()
+	}
+
+	return fmt.Sprintf(EmailBodyTemplate, bodyLines)
 }

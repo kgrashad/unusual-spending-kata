@@ -43,7 +43,36 @@ func TestGenerateEmail(t *testing.T) {
 		subject, body, _ := GenerateEmail(input)
 
 		wantSubject := fmt.Sprintf(EmailSubjectTemplate, 148.0)
-		wantBody := fmt.Sprintf(EmailBodyTemplate, 148.0, "groceries")
+		wantBodyLine := fmt.Sprintf(EmailBodyLineTemplate, 148.0, "groceries")
+		wantBodyLine += fmt.Sprintln()
+		wantBody := fmt.Sprintf(EmailBodyTemplate, wantBodyLine)
+
+		assertString(wantSubject, subject, t)
+		assertString(wantBody, body, t)
+	})
+
+	t.Run("When multiple categories are passed, expected email is generate", func(t *testing.T) {
+		input := []PaymentCategorySummary{
+			{
+				Category:           "groceries",
+				PreviousMonthTotal: 50,
+				CurrentMonthTotal:  148,
+			}, {
+				Category:           "travel",
+				PreviousMonthTotal: 400,
+				CurrentMonthTotal:  928,
+			},
+		}
+
+		subject, body, _ := GenerateEmail(input)
+
+		wantSubject := fmt.Sprintf(EmailSubjectTemplate, 1076.0)
+		wantBodyLine := fmt.Sprintf(EmailBodyLineTemplate, 148.0, "groceries")
+		wantBodyLine += fmt.Sprintln()
+		wantBodyLine += fmt.Sprintf(EmailBodyLineTemplate, 928.0, "travel")
+		wantBodyLine += fmt.Sprintln()
+
+		wantBody := fmt.Sprintf(EmailBodyTemplate, wantBodyLine)
 
 		assertString(wantSubject, subject, t)
 		assertString(wantBody, body, t)
