@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -42,10 +41,8 @@ func TestGenerateEmail(t *testing.T) {
 
 		subject, body, _ := GenerateEmail(input)
 
-		wantSubject := fmt.Sprintf(EmailSubjectTemplate, 148.0)
-		wantBodyLine := fmt.Sprintf(EmailBodyLineTemplate, 148.0, "groceries")
-		wantBodyLine += fmt.Sprintln()
-		wantBody := fmt.Sprintf(EmailBodyTemplate, wantBodyLine)
+		wantSubject := "Unusual spending of $148 detected!"
+		wantBody := "Hello card user!\n\nWe have detected unusually high spending on your card in these categories:\n\n* You spent $148 on groceries\n\nLove,\n\nThe Credit Card Company"
 
 		assertString(wantSubject, subject, t)
 		assertString(wantBody, body, t)
@@ -66,13 +63,8 @@ func TestGenerateEmail(t *testing.T) {
 
 		subject, body, _ := GenerateEmail(input)
 
-		wantSubject := fmt.Sprintf(EmailSubjectTemplate, 1076.0)
-		wantBodyLine := fmt.Sprintf(EmailBodyLineTemplate, 148.0, "groceries")
-		wantBodyLine += fmt.Sprintln()
-		wantBodyLine += fmt.Sprintf(EmailBodyLineTemplate, 928.0, "travel")
-		wantBodyLine += fmt.Sprintln()
-
-		wantBody := fmt.Sprintf(EmailBodyTemplate, wantBodyLine)
+		wantSubject := "Unusual spending of $1076 detected!"
+		wantBody := "Hello card user!\n\nWe have detected unusually high spending on your card in these categories:\n\n* You spent $148 on groceries\n* You spent $928 on travel\n\nLove,\n\nThe Credit Card Company"
 
 		assertString(wantSubject, subject, t)
 		assertString(wantBody, body, t)
@@ -81,6 +73,6 @@ func TestGenerateEmail(t *testing.T) {
 
 func assertString(want, got string, t *testing.T) {
 	if want != got {
-		t.Errorf("want: %v, got: %v", want, got)
+		t.Errorf("want: %q, got: %q", want, got)
 	}
 }
