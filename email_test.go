@@ -1,6 +1,9 @@
 package main
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestGenerateEmail(t *testing.T) {
 
@@ -27,4 +30,28 @@ func TestGenerateEmail(t *testing.T) {
 			t.Errorf("want %v, got %v", nil, err)
 		}
 	})
+
+	t.Run("When single category is passed, expected email is generate", func(t *testing.T) {
+		input := []PaymentCategorySummary{
+			{
+				Category:           "groceries",
+				PreviousMonthTotal: 50,
+				CurrentMonthTotal:  148,
+			},
+		}
+
+		subject, body, _ := GenerateEmail(input)
+
+		wantSubject := fmt.Sprintf(EmailSubjectTemplate, 148.0)
+		wantBody := fmt.Sprintf(EmailBodyTemplate, 148.0, "groceries")
+
+		assertString(wantSubject, subject, t)
+		assertString(wantBody, body, t)
+	})
+}
+
+func assertString(want, got string, t *testing.T) {
+	if want != got {
+		t.Errorf("want: %v, got: %v", want, got)
+	}
 }
